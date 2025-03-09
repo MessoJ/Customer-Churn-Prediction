@@ -3,10 +3,12 @@ import pandas as pd
 def engineer_features():
     df = pd.read_csv('data/processed_data.csv')
     
-    # Example feature: Average monthly charges
-    df['MonthlyCharges'] = df['MonthlyCharges'].astype(float)
-    df['TotalCharges'] = df['TotalCharges'].astype(float)
-    df['AvgMonthlyCharge'] = df['TotalCharges'] / (df['tenure'] + 1e-6)  # Avoid division by zero
+    # Use correct column names from preprocessing
+    df['remainder__MonthlyCharges'] = df['remainder__MonthlyCharges'].astype(float)
+    df['remainder__TotalCharges'] = df['remainder__TotalCharges'].astype(float)
+    
+    # Update feature calculation
+    df['AvgMonthlyCharge'] = df['remainder__TotalCharges'] / (df['remainder__tenure'] + 1e-6)
     
     # Save engineered data
     df.to_csv('data/engineered_data.csv', index=False)
