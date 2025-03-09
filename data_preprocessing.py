@@ -10,7 +10,10 @@ def preprocess_data():
     # Handle missing values
     df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
     df['TotalCharges'].fillna(df['TotalCharges'].median(), inplace=True)
-    
+    df['TotalCharges'] = df['TotalCharges'].replace(' ', pd.NA)
+    df['TotalCharges'] = df['TotalCharges'].astype(float)
+    df['TotalCharges'] = df['TotalCharges'].fillna(df['TotalCharges'].median())
+   
     # Encode categorical variables
     binary_cols = ['gender', 'Partner', 'Dependents', 'PhoneService', 'PaperlessBilling', 'Churn']
     label_encoder = LabelEncoder()
@@ -24,6 +27,8 @@ def preprocess_data():
         remainder='passthrough'
     )
     processed_data = preprocessor.fit_transform(df)
+    feature_names = preprocessor.get_feature_names_out()
+    processed_df = pd.DataFrame(processed_data, columns=feature_names)
     
     # Save processed data and preprocessor
     pd.DataFrame(processed_data).to_csv('data/processed_data.csv', index=False)
