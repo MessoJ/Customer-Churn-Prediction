@@ -18,6 +18,7 @@ def engineer_features():
     
     # Create new features using correct columns
     df['AvgMonthlyCharge'] = df['remainder__TotalCharges'] / (df['remainder__tenure'] + 1e-6)
+    df['HighValueFlag'] = (df['remainder__MonthlyCharges'] > 70).astype(int)
     
     df.to_csv('data/engineered_data.csv', index=False)
     print("Feature engineering completed.")
