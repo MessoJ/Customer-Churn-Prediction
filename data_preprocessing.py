@@ -20,7 +20,15 @@ def preprocess_data():
     categorical_cols = ['InternetService', 'Contract', 'PaymentMethod']
     numeric_cols = ['tenure', 'MonthlyCharges', 'TotalCharges']
     binary_cols = ['gender', 'Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
-    binary_mapping = {'Yes': 1, 'No': 0, 'Male': 1, 'Female': 0}
+    binary_mapping = {
+        'gender': {'Male': 1, 'Female': 0},
+        'Partner': {'Yes': 1, 'No': 0},
+        'Dependents': {'Yes': 1, 'No': 0},
+        'PhoneService': {'Yes': 1, 'No': 0},
+        'PaperlessBilling': {'Yes': 1, 'No': 0}
+    }
+    
+    df = df.replace(binary_mapping)
     
     # Convert binary columns first
     df[binary_cols] = df[binary_cols].replace({'Yes': 1, 'No': '0'}).astype(int)
