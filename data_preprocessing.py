@@ -22,7 +22,7 @@ def preprocess_data():
     binary_cols = ['gender', 'Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
     
     # Convert binary columns first
-    df[binary_cols] = df[binary_cols].replace({'Yes': 1, 'No': 0, 'Male': 1, 'Female': 0})
+    df[binary_cols] = df[binary_cols].replace({'Yes': 1, 'No': '0'}).astype(int)
     
     # Create column transformer
     preprocessor = ColumnTransformer(
