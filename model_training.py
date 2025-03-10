@@ -5,8 +5,13 @@ import joblib
 
 def train_model():
     df = pd.read_csv('data/engineered_data.csv')
-    X = df.drop('Churn', axis=1)
-    y = df['Churn']
+    
+    # Check column names first
+    print(df.columns)
+    
+    # Use the correct column name for Churn (likely 'remainder__Churn')
+    X = df.drop('remainder__Churn', axis=1)
+    y = df['remainder__Churn']
     
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
