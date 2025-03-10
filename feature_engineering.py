@@ -4,7 +4,7 @@ def engineer_features():
     df = pd.read_csv('data/processed_data.csv')
     
     # Use correct column names from preprocessing
-    df['MonthlyCharges'] = df['MonthlyCharges'].astype(float)
+    df['monthly_charges'] = df['monthly_charges'].astype(float)
     df['TotalCharges'] = df['TotalCharges'].astype(float)
     
     # Create new features using correct columns
