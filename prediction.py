@@ -33,39 +33,51 @@ def preprocess_customer_data(customer_data):
             processed_data[feature] = customer_data[feature]
         elif feature.startswith('cat__InternetService_'):
             # Handle one-hot encoded internet service
-            internet_service = customer_data.get('InternetService', 'None')
-            value = feature.split('_')[-1]
-            processed_data[feature] = (internet_service == value).astype(float)
+            service_type = feature.split('_')[-1]
+            if 'InternetService' in customer_data:
+                # Create a Series for comparison to handle both dict and DataFrame
+                is_service = customer_data['InternetService'].eq(service_type)
+                processed_data[feature] = is_service.astype(float)
+            else:
+                processed_data[feature] = 0.0
         elif feature.startswith('cat__Contract_'):
             # Handle one-hot encoded contract
-            contract = customer_data.get('Contract', 'None')
-            value = feature.split('_')[-1]
-            processed_data[feature] = (contract == value).astype(float)
+            contract_type = feature.split('_')[-1]
+            if 'Contract' in customer_data:
+                # Create a Series for comparison to handle both dict and DataFrame
+                is_contract = customer_data['Contract'].eq(contract_type)
+                processed_data[feature] = is_contract.astype(float)
+            else:
+                processed_data[feature] = 0.0
         elif feature.startswith('cat__PaymentMethod_'):
             # Handle one-hot encoded payment method
-            payment = customer_data.get('PaymentMethod', 'None')
-            value = ' '.join(feature.split('_')[2:])
-            processed_data[feature] = (payment == value).astype(float)
+            payment_type = ' '.join(feature.split('_')[2:])
+            if 'PaymentMethod' in customer_data:
+                # Create a Series for comparison to handle both dict and DataFrame
+                is_payment = customer_data['PaymentMethod'].eq(payment_type)
+                processed_data[feature] = is_payment.astype(float)
+            else:
+                processed_data[feature] = 0.0
         elif feature == 'AvgMonthlyCharge':
             # Calculate average monthly charge
             if 'TotalCharges' in customer_data and 'tenure' in customer_data:
                 processed_data[feature] = customer_data['TotalCharges'] / (customer_data['tenure'] + 1e-6)
             else:
-                processed_data[feature] = 0
+                processed_data[feature] = 0.0
         elif feature == 'TenureToChargeRatio':
             # Calculate tenure to charge ratio
             if 'tenure' in customer_data and 'MonthlyCharges' in customer_data:
                 processed_data[feature] = customer_data['tenure'] / (customer_data['MonthlyCharges'] + 1e-6)
             else:
-                processed_data[feature] = 0
+                processed_data[feature] = 0.0
         else:
             # For any missing features, fill with 0
-            processed_data[feature] = 0
+            processed_data[feature] = 0.0
     
     # Ensure all columns are present in the correct order
     for col in feature_names:
         if col not in processed_data.columns:
-            processed_data[col] = 0
+            processed_data[col] = 0.0
     
     return processed_data[feature_names]
 
