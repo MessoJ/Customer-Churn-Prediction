@@ -31,7 +31,7 @@ def engineer_features():
         'remainder__StreamingTV',
         'remainder__StreamingMovies'
     ]
-    df[remaining_cats] = df[remaining_cats].replace({'Yes':1, 'No':0, 'No internet service':0})
+    df[cat_cols] = df[cat_cols].replace({'Yes': 1, 'No': 0, 'No internet service': 0})
     
     df.to_csv('data/engineered_data.csv', index=False)
     print("Feature engineering completed.")
