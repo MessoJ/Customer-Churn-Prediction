@@ -6,7 +6,7 @@ def engineer_features():
     # Use correct column names from preprocessing
     df = pd.read_csv('data/telco_churn.csv')
     print(df.columns)  # Print the available columns
-    df['monthly_charges'] = df['monthly_charges'].astype(float)
+    df['MonthlyCharges'] = df['MonthlyCharges'].astype(float)
     df['TotalCharges'] = df['TotalCharges'].astype(float)
     
     # Create new features using correct columns
