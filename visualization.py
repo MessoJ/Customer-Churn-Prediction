@@ -6,9 +6,32 @@ import os
 import numpy as np
 import shap
 
-explainer = shap.TreeExplainer(model)
-shap_values = explainer.shap_values(X_test)
-shap.summary_plot(shap_values, X_test, plot_type="bar")
+def create_shap_plot():
+    try:
+        model = joblib.load('models/churn_model.joblib')
+        feature_names = joblib.load('models/feature_names.joblib')
+        df = pd.read_csv('data/engineered_data.csv')
+        
+        # Convert Churn to numeric
+        if df['remainder__Churn'].dtype == 'object':
+            df['remainder__Churn'] = df['remainder__Churn'].map({'Yes': 1, 'No': 0})
+        
+        # Use only features used during training
+        X = df[feature_names]
+        
+        # Create SHAP explainer
+        explainer = shap.TreeExplainer(model)
+        shap_values = explainer.shap_values(X)
+        
+        plt.figure(figsize=(10, 8))
+        shap.summary_plot(shap_values, X, plot_type="bar", show=False)
+        plt.title('SHAP Feature Importance')
+        plt.tight_layout()
+        plt.savefig('results/shap_feature_importance.png')
+        plt.close()
+        print("SHAP visualization created")
+    except Exception as e:
+        print(f"Error creating SHAP plot: {e}")
 
 def visualize_data():
     # Create results directory if it doesn't exist
