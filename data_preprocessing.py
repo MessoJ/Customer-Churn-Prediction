@@ -7,6 +7,9 @@ import os
 def preprocess_data():
     # Load data
     df = pd.read_csv('data/telco_churn.csv')
+
+    # Convert column names to snake_case before processing
+    df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
     
     # Handle TotalCharges
     df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
@@ -32,6 +35,9 @@ def preprocess_data():
     feature_names = preprocessor.get_feature_names_out(
         input_features=df.columns.tolist()
     )
+
+    # After transformation, ensure consistent naming
+    processed_df.columns = processed_df.columns.str.lower().str.replace(' ', '_')
     
     # Create DataFrame with proper columns
     processed_df = pd.DataFrame(processed_data, columns=feature_names)
