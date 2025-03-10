@@ -20,9 +20,13 @@ def preprocess_data():
     categorical_cols = ['InternetService', 'Contract', 'PaymentMethod']
     numeric_cols = ['tenure', 'MonthlyCharges', 'TotalCharges']
     binary_cols = ['gender', 'Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
+    binary_mapping = {'Yes': 1, 'No': 0, 'Male': 1, 'Female': 0}
     
     # Convert binary columns first
     df[binary_cols] = df[binary_cols].replace({'Yes': 1, 'No': '0'}).astype(int)
+
+    for col in binary_cols:
+        df[col] = pd.factorize(df[col])[0]
     
     # Create column transformer
     preprocessor = ColumnTransformer(
