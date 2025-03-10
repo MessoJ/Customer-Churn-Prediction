@@ -5,6 +5,10 @@ import joblib
 import os
 
 def preprocess_data():
+    # Create directories first
+    os.makedirs('data', exist_ok=True)
+    os.makedirs('models', exist_ok=True)
+    
     # Load data
     df = pd.read_csv('data/telco_churn.csv')
     
@@ -15,16 +19,10 @@ def preprocess_data():
     # Define columns
     categorical_cols = ['InternetService', 'Contract', 'PaymentMethod']
     numeric_cols = ['tenure', 'MonthlyCharges', 'TotalCharges']
-    target_col = ['Churn']
-    binary_cols = [
-        'remainder__gender', 
-        'remainder__Partner',
-        'remainder__Dependents',
-        'remainder__PhoneService',
-        'remainder__PaperlessBilling'
-    ]
-    binary_mapping = {'Yes': 1, 'No': 0, 'Male': 1, 'Female': 0}
-    df[binary_cols] = df[binary_cols].replace(binary_mapping)
+    binary_cols = ['gender', 'Partner', 'Dependents', 'PhoneService', 'PaperlessBilling']
+    
+    # Convert binary columns first
+    df[binary_cols] = df[binary_cols].replace({'Yes': 1, 'No': 0, 'Male': 1, 'Female': 0})
     
     # Create column transformer
     preprocessor = ColumnTransformer(
@@ -37,20 +35,18 @@ def preprocess_data():
     # Fit and transform
     processed_data = preprocessor.fit_transform(df)
     
-    # Get correct feature names
+    # Get feature names
     feature_names = preprocessor.get_feature_names_out(
         input_features=df.columns.tolist()
     )
     
-    # Create DataFrame with proper columns
+    # Create DataFrame
     processed_df = pd.DataFrame(processed_data, columns=feature_names)
-    
-    # Create the 'models' directory if it doesn't exist
-    os.makedirs('models', exist_ok=True)
     
     # Save data
     processed_df.to_csv('data/processed_data.csv', index=False)
     joblib.dump(preprocessor, 'models/preprocessor.joblib')
+    
     print(f"Processed data shape: {processed_df.shape}")
     print("Data preprocessing completed.")
 
