@@ -16,6 +16,8 @@ def preprocess_data():
     categorical_cols = ['InternetService', 'Contract', 'PaymentMethod']
     numeric_cols = ['tenure', 'MonthlyCharges', 'TotalCharges']
     target_col = ['Churn']
+    binary_cols = ['remainder__gender', 'remainder__Partner', ...]
+    df[binary_cols] = df[binary_cols].replace({'Yes':1, 'No':0, 'Male':1, 'Female':0})
     
     # Create column transformer
     preprocessor = ColumnTransformer(
