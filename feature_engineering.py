@@ -4,7 +4,7 @@ def engineer_features():
     df = pd.read_csv('data/processed_data.csv')
     
     # Use correct column names from preprocessing
-    df = pd.read_csv('telco_churn.csv')
+    df = pd.read_csv('data/telco_churn.csv')
     print(df.columns)  # Print the available columns
     df['monthly_charges'] = df['monthly_charges'].astype(float)
     df['TotalCharges'] = df['TotalCharges'].astype(float)
