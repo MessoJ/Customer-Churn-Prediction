@@ -43,8 +43,16 @@ def train_model():
     
     
     
-    model = RandomForestClassifier(n_estimators=150, max_depth=8, class_weight='balanced', random_state=42)
+    model = RandomForestClassifier(n_estimators=150, max_depth=8, class_weight='balanced', sampling_strategy='minority', random_state=42)
     model.fit(X_train, y_train)
+
+    param_grid = {
+        'n_estimators': [100, 200],
+        'max_depth': [5, 10],
+        'min_samples_leaf': [1, 2]
+    }
+    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=5)
+    grid_search.fit(X_train, y_train)
     
     # Calculate and print accuracy
     train_score = model.score(X_train, y_train)
