@@ -70,40 +70,13 @@ pip install -r requirements.txt
 
 ```python
 # Run the full pipeline
-python main.py
-```
-
-### Making Predictions
-
-```python
-# Make a prediction for a single customer
-from prediction import predict_churn
-
-customer_data = {
-    'gender': 'Male',
-    'SeniorCitizen': 0,
-    'Partner': 'Yes',
-    'Dependents': 'No',
-    'tenure': 24,
-    'PhoneService': 'Yes',
-    'MultipleLines': 'No',
-    'InternetService': 'Fiber optic',
-    'OnlineSecurity': 'No',
-    'OnlineBackup': 'Yes',
-    'DeviceProtection': 'No',
-    'TechSupport': 'No',
-    'StreamingTV': 'Yes',
-    'StreamingMovies': 'Yes',
-    'Contract': 'Month-to-month',
-    'PaperlessBilling': 'Yes',
-    'PaymentMethod': 'Electronic check',
-    'MonthlyCharges': 94.85,
-    'TotalCharges': 2275.4
-}
-
-result = predict_churn(customer_data)
-print(result)
-# Output: {'churn_probability': 0.21, 'churn_risk': 'Low', 'is_likely_to_churn': False}
+python data_preprocessing.py
+python feature_engineering.py
+python model_training.py
+python model_validation.py
+python model_evaluation.py
+python visualization.py
+python prediction.py
 ```
 
 ## Model Insights
@@ -121,23 +94,22 @@ Key findings from the analysis:
 ```
 Customer-Churn-Prediction/
 ├── data/
-│   └── telco_customer_churn.csv
+│   └── telco_churn.csv
 ├── data_preprocessing.py
 ├── feature_engineering.py
-├── model_training.py
 ├── model_evaluation.py
-├── visualization.py
+├── model_training.py
+├── model_validation.py
 ├── prediction.py
-├── main.py
-├── models/
-│   └── churn_model.pkl
+├── visualization.py
+├── utils.py
 ├── requirements.txt
 └── README.md
 ```
 
 ## Future Improvements
 
-- Implement hyperparameter tuning
+- Consider implementing hyperparameter tuning
 - Explore ensemble models (Random Forest, XGBoost)
 - Add more interaction features
 - Develop customer segmentation before classification
