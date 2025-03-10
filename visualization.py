@@ -11,11 +11,9 @@ def create_shap_visualizations():
     print("Generating SHAP visualizations...")
     
     try:
-        # Load the model and feature names
+        # Load the model and data
         model = joblib.load('models/churn_model.joblib')
         feature_names = joblib.load('models/feature_names.joblib')
-        
-        # Load data
         df = pd.read_csv('data/engineered_data.csv')
         
         # Convert Churn to numeric if needed
@@ -25,47 +23,31 @@ def create_shap_visualizations():
         # Use only the features used for training
         X = df[feature_names]
         
-        # Create a small sample for SHAP calculation (faster)
+        # Create a sample for faster computation
         X_sample = X.sample(min(500, len(X)), random_state=42)
-        
-        # Create directory for SHAP plots
-        os.makedirs('results/shap', exist_ok=True)
         
         # Initialize the SHAP explainer
         explainer = shap.TreeExplainer(model)
         shap_values = explainer.shap_values(X_sample)
+        
+        # If shap_values is a list (for multiclass), use the positive class (index 1)
+        if isinstance(shap_values, list):
+            shap_values = shap_values[1]  # Use positive class values
         
         # Create SHAP summary plot
         plt.figure(figsize=(12, 8))
         shap.summary_plot(shap_values, X_sample, plot_type="bar", show=False)
         plt.title('Feature Importance (SHAP values)')
         plt.tight_layout()
-        plt.savefig('results/shap/feature_importance.png')
+        plt.savefig('results/shap_feature_importance.png')
         plt.close()
-        
-        # Create SHAP beeswarm plot
-        plt.figure(figsize=(12, 10))
-        shap.summary_plot(shap_values, X_sample, show=False)
-        plt.title('Feature Impact on Predictions')
-        plt.tight_layout()
-        plt.savefig('results/shap/feature_impact.png')
-        plt.close()
-        
-        # Create SHAP dependence plots for top features
-        top_features = np.argsort(-np.abs(shap_values).mean(0))[:3]
-        for i in top_features:
-            feature_name = X_sample.columns[i]
-            plt.figure(figsize=(10, 6))
-            shap.dependence_plot(i, shap_values, X_sample, show=False)
-            plt.title(f'SHAP Dependence Plot: {feature_name}')
-            plt.tight_layout()
-            plt.savefig(f'results/shap/dependence_{feature_name.replace("__", "_")}.png')
-            plt.close()
         
         print("SHAP visualizations created successfully")
         
     except Exception as e:
         print(f"Error creating SHAP visualizations: {e}")
+        import traceback
+        traceback.print_exc()
 
 def create_shap_plot():
     try:
