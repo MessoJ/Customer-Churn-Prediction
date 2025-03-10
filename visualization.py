@@ -4,6 +4,11 @@ import seaborn as sns
 import joblib
 import os
 import numpy as np
+import shap
+
+explainer = shap.TreeExplainer(model)
+shap_values = explainer.shap_values(X_test)
+shap.summary_plot(shap_values, X_test, plot_type="bar")
 
 def visualize_data():
     # Create results directory if it doesn't exist
