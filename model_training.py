@@ -75,6 +75,8 @@ def train_model():
     print(f"Testing accuracy: {test_score:.4f}")
     
     # Save the best model
+    feature_names = X.columns.tolist()
+    joblib.dump(feature_names, 'models/feature_names.joblib')
     joblib.dump(best_model, 'models/churn_model.joblib')
     print("Model training completed.")
 
