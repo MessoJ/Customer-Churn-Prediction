@@ -92,7 +92,7 @@ def engineer_features():
         'remainder__DeviceProtection',
         'remainder__StreamingMovies'
     ]
-    df[remaining_cats] = df[remaining_cats].replace({'Yes': 1, 'No': 0, 'No internet service': 0})
+    df[remaining_cats] = df[remaining_cats].replace({'Yes': 1, 'No': 0, 'No internet service': 0}).infer_objects(copy=False)
     
     
     # Add advanced features
