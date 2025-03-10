@@ -37,6 +37,7 @@ def preprocess_data():
     
     # Save data
     processed_df.to_csv('data/processed_data.csv', index=False)
+    processed_df = pd.read_csv('data/processed_data.csv')
     joblib.dump(preprocessor, 'models/preprocessor.joblib')
     print(f"Processed data shape: {processed_df.shape}")
     print("Data preprocessing completed.")
