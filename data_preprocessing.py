@@ -28,7 +28,7 @@ def preprocess_data():
         'PaperlessBilling': {'Yes': 1, 'No': 0}
     }
     
-    df = df.replace(binary_mapping)
+    df = df.replace(binary_mapping).infer_objects(copy=False)
     
     # Convert binary columns first
     df[binary_cols] = df[binary_cols].replace({'Yes': 1, 'No': '0'}).astype(int)
