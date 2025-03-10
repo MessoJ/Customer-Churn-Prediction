@@ -100,19 +100,21 @@ def predict_churn(customer_data):
                 'churn_probability': float(churn_proba[0]),
                 'churn_risk': 'High' if churn_proba[0] > 0.7 else 
                              'Medium' if churn_proba[0] > 0.3 else 'Low',
-                'is_likely_to_churn': bool(churn_proba[0] > 0.5)
+                'is_likely_to_churn': bool(churn_proba[0] > 0.5)  # Explicitly convert to bool
             }
         else:
             result = pd.DataFrame({
                 'churn_probability': churn_proba,
                 'churn_risk': ['High' if p > 0.7 else 'Medium' if p > 0.3 else 'Low' for p in churn_proba],
-                'is_likely_to_churn': churn_proba > 0.5
+                'is_likely_to_churn': [bool(p > 0.5) for p in churn_proba]  # Create list of booleans
             }, index=customer_data.index)
         
         return result
     
     except Exception as e:
         print(f"Error predicting churn: {e}")
+        import traceback
+        traceback.print_exc()
         if isinstance(customer_data, dict):
             return {'error': str(e)}
         else:
