@@ -19,6 +19,19 @@ def engineer_features():
     # Create new features using correct columns
     df['AvgMonthlyCharge'] = df['remainder__TotalCharges'] / (df['remainder__tenure'] + 1e-6)
     df['HighValueFlag'] = (df['remainder__MonthlyCharges'] > 70).astype(int)
+    df['TenureToChargeRatio'] = df['remainder__tenure'] / (df['remainder__MonthlyCharges'] + 1e-6)
+    df['ServiceDiversity'] = df[['OnlineSecurity','TechSupport','StreamingTV']].sum(axis=1)
+
+    remaining_cats = [
+        'remainder__MultipleLines',
+        'remainder__OnlineSecurity',
+        'remainder__OnlineBackup',
+        'remainder__DeviceProtection',
+        'remainder__TechSupport',
+        'remainder__StreamingTV',
+        'remainder__StreamingMovies'
+    ]
+    df[remaining_cats] = df[remaining_cats].replace({'Yes':1, 'No':0, 'No internet service':0})
     
     df.to_csv('data/engineered_data.csv', index=False)
     print("Feature engineering completed.")
