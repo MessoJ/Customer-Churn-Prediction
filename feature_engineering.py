@@ -1,5 +1,5 @@
 import pandas as pd
-import numpy as np  # Make sure to import numpy
+import numpy as np
 
 def engineer_features():
     # Read the processed data file
@@ -7,17 +7,17 @@ def engineer_features():
     
     print(df.columns)  # Print the available columns
     
-    # First replace spaces with NaN in TotalCharges
-    df['TotalCharges'] = df['TotalCharges'].replace(' ', np.nan)
+    # First replace spaces with NaN in TotalCharges - using correct column name
+    df['remainder__TotalCharges'] = df['remainder__TotalCharges'].replace(' ', np.nan)
     
     # Then convert to numeric
-    df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
+    df['remainder__TotalCharges'] = pd.to_numeric(df['remainder__TotalCharges'], errors='coerce')
     
     # Convert MonthlyCharges to float
-    df['MonthlyCharges'] = df['MonthlyCharges'].astype(float)
+    df['remainder__MonthlyCharges'] = df['remainder__MonthlyCharges'].astype(float)
     
     # Create new features using correct columns
-    df['AvgMonthlyCharge'] = df['TotalCharges'] / (df['tenure'] + 1e-6)
+    df['AvgMonthlyCharge'] = df['remainder__TotalCharges'] / (df['remainder__tenure'] + 1e-6)
     
     df.to_csv('data/engineered_data.csv', index=False)
     print("Feature engineering completed.")
