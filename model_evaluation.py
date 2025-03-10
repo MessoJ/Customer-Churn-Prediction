@@ -7,6 +7,8 @@ from sklearn.metrics import (
 )
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+
 
 def evaluate_model():
     model = joblib.load('models/churn_model.joblib')
@@ -45,6 +47,8 @@ def evaluate_model():
     print(f"Recall: {recall_score(y_test, y_pred):.2f}")
     print(f"F1-Score: {f1_score(y_test, y_pred):.2f}")
     print(f"AUC-ROC: {roc_auc_score(y_test, y_proba):.2f}")
+
+    os.makedirs('results', exist_ok=True)
     
     # Confusion matrix
     plt.figure(figsize=(8, 6))
