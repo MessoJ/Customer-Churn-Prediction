@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 import joblib
+import os
 
 def preprocess_data():
     # Load data
@@ -35,9 +36,11 @@ def preprocess_data():
     # Create DataFrame with proper columns
     processed_df = pd.DataFrame(processed_data, columns=feature_names)
     
+    # Create the 'models' directory if it doesn't exist
+    os.makedirs('models', exist_ok=True)
+    
     # Save data
     processed_df.to_csv('data/processed_data.csv', index=False)
-    processed_df = pd.read_csv('data/processed_data.csv')
     joblib.dump(preprocessor, 'models/preprocessor.joblib')
     print(f"Processed data shape: {processed_df.shape}")
     print("Data preprocessing completed.")
