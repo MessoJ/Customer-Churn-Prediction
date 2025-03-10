@@ -8,6 +8,9 @@ def engineer_features():
     print(df.columns)  # Print the available columns
     df['MonthlyCharges'] = df['MonthlyCharges'].astype(float)
     df['TotalCharges'] = df['TotalCharges'].astype(float)
+    df['TotalCharges'] = df['TotalCharges'].replace(' ', np.nan)
+    df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
+
     
     # Create new features using correct columns
     df['AvgMonthlyCharge'] = df['TotalCharges'] / (df['tenure'] + 1e-6)
