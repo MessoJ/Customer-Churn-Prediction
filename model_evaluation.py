@@ -71,6 +71,9 @@ def evaluate_model():
     plt.legend()
     plt.savefig('results/roc_curve.png')
     plt.close()
+
+    feature_names = joblib.load('models/feature_names.joblib')
+    X = df[feature_names]
     
     # Feature importance
     plt.figure(figsize=(12, 8))
@@ -78,6 +81,7 @@ def evaluate_model():
         'Feature': X.columns,
         'Importance': model.feature_importances_
     }).sort_values('Importance', ascending=False)
+
     
     sns.barplot(x='Importance', y='Feature', data=feature_importance.head(15))
     plt.title('Top 15 Feature Importances')
