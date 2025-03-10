@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import joblib
 import os
+import numpy as np
+from data_preprocessing import preprocess_data
+from feature_engineering import engineer_features
 
 def visualize_data():
     # Create results directory if it doesn't exist
@@ -22,32 +25,70 @@ def visualize_data():
     # Load the model
     model = joblib.load('models/churn_model.joblib')
     
-    # Load the preprocessed features - we need to load or recreate the same features used for training
-    # Option 1: If you have the processed features saved, load them
-    try:
-        # Try to load processed features if available
-        X_processed = pd.read_csv('data/processed_features.csv')
-        feature_importance = pd.Series(model.feature_importances_, index=X_processed.columns)
-    except FileNotFoundError:
-        # Option 2: Recreate the feature processing pipeline
-        # This is a simplified approach - ideally you should use the same preprocessing as in training
-        from data_preprocessing import preprocess_data
-        from feature_engineering import engineer_features
-        
-        processed_data = preprocess_data()
-        X_processed = engineer_features(processed_data)
-        
-        # Remove the target variable if present
-        if 'remainder__Churn' in X_processed.columns:
-            X_processed = X_processed.drop('remainder__Churn', axis=1)
-        
-        feature_importance = pd.Series(model.feature_importances_, index=X_processed.columns)
+    # Looking at the error, we need to call preprocessing and feature engineering without arguments
+    processed_data = preprocess_data()  # No arguments based on error message
+    X_processed = engineer_features()   # No arguments based on error message
+    
+    # Get features excluding the target
+    if 'remainder__Churn' in X_processed.columns:
+        X_features = X_processed.drop(['remainder__Churn', 'remainder__customerID'], axis=1, errors='ignore')
+    else:
+        X_features = X_processed.drop('remainder__customerID', axis=1, errors='ignore')
+    
+    # Get feature importances and handle potential shape mismatch
+    if hasattr(model, 'feature_importances_'):
+        if len(model.feature_importances_) == len(X_features.columns):
+            feature_importance = pd.Series(model.feature_importances_, index=X_features.columns)
+        else:
+            # If there's a shape mismatch, create a generic feature list
+            print(f"Shape mismatch: {len(model.feature_importances_)} importances vs {len(X_features.columns)} columns")
+            feature_columns = [f"Feature_{i}" for i in range(len(model.feature_importances_))]
+            feature_importance = pd.Series(model.feature_importances_, index=feature_columns)
+    else:
+        # For models that don't have feature_importances_ attribute
+        print("Model doesn't provide feature importances. Using coefficients if available.")
+        if hasattr(model, 'coef_'):
+            # For linear models
+            if len(model.coef_[0]) == len(X_features.columns):
+                feature_importance = pd.Series(np.abs(model.coef_[0]), index=X_features.columns)
+            else:
+                feature_columns = [f"Feature_{i}" for i in range(len(model.coef_[0]))]
+                feature_importance = pd.Series(np.abs(model.coef_[0]), index=feature_columns)
+        else:
+            print("Cannot extract feature importance from this model type.")
+            return
     
     # Plot feature importance
     plt.figure(figsize=(10, 8))
     feature_importance.nlargest(10).plot(kind='barh')
     plt.title('Top 10 Feature Importance')
     plt.savefig('results/feature_importance.png')
+    plt.close()
+    
+    # Additional visualizations
+    
+    # Contract Type vs Churn
+    plt.figure(figsize=(10, 6))
+    contract_churn = df.groupby(['Contract', 'Churn']).size().unstack()
+    contract_churn.plot(kind='bar', stacked=True)
+    plt.title('Contract Type vs Churn')
+    plt.xlabel('Contract Type')
+    plt.ylabel('Count')
+    plt.savefig('results/contract_vs_churn.png')
+    plt.close()
+    
+    # Monthly Charges vs Churn
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(x='Churn', y='MonthlyCharges', data=df)
+    plt.title('Monthly Charges vs Churn')
+    plt.savefig('results/monthly_charges_vs_churn.png')
+    plt.close()
+    
+    # Tenure vs Churn
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(x='Churn', y='tenure', data=df)
+    plt.title('Tenure vs Churn')
+    plt.savefig('results/tenure_vs_churn.png')
     plt.close()
 
 if __name__ == "__main__":
