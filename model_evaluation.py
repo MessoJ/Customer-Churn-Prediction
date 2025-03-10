@@ -12,6 +12,7 @@ import os
 
 def evaluate_model():
     model = joblib.load('models/churn_model.joblib')
+    feature_names = joblib.load('models/feature_names.joblib')
     df = pd.read_csv('data/engineered_data.csv')
     
     # Print columns to see what we're working with
@@ -26,7 +27,8 @@ def evaluate_model():
         df['remainder__Churn'] = df['remainder__Churn'].map({'Yes': 1, 'No': 0})
     
     # Prepare features and target with correct column name
-    X = df.drop('remainder__Churn', axis=1)
+    # X = df.drop('remainder__Churn', axis=1)
+    X = df[feature_names]
     y = df['remainder__Churn']
     
     # Convert any remaining object columns to numeric
@@ -72,7 +74,7 @@ def evaluate_model():
     plt.savefig('results/roc_curve.png')
     plt.close()
 
-    feature_names = joblib.load('models/feature_names.joblib')
+    
     X = df[feature_names]
     
     # Feature importance
