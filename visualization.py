@@ -4,15 +4,18 @@ import seaborn as sns
 import joblib
 import os
 import numpy as np
-from data_preprocessing import preprocess_data
-from feature_engineering import engineer_features
 
 def visualize_data():
     # Create results directory if it doesn't exist
     os.makedirs('results', exist_ok=True)
     
-    # Load the data
-    df = pd.read_csv('data/telco_churn.csv')
+    # Load the original data
+    try:
+        df = pd.read_csv('data/telco_churn.csv')
+        print("Original data loaded successfully")
+    except FileNotFoundError:
+        print("Error: Could not find the original data file")
+        return
     
     # Churn distribution
     plt.figure(figsize=(8, 6))
@@ -21,75 +24,87 @@ def visualize_data():
     plt.savefig('results/churn_distribution.png')
     plt.close()
     
-    # Feature importance
-    # Load the model
-    model = joblib.load('models/churn_model.joblib')
+    # Try to load the model
+    try:
+        model = joblib.load('models/churn_model.joblib')
+        print("Model loaded successfully")
+    except FileNotFoundError:
+        print("Error: Could not find the model file")
+        return
     
-    # Looking at the error, we need to call preprocessing and feature engineering without arguments
-    processed_data = preprocess_data()  # No arguments based on error message
-    X_processed = engineer_features()   # No arguments based on error message
-    
-    # Get features excluding the target
-    if 'remainder__Churn' in X_processed.columns:
-        X_features = X_processed.drop(['remainder__Churn', 'remainder__customerID'], axis=1, errors='ignore')
-    else:
-        X_features = X_processed.drop('remainder__customerID', axis=1, errors='ignore')
-    
-    # Get feature importances and handle potential shape mismatch
-    if hasattr(model, 'feature_importances_'):
-        if len(model.feature_importances_) == len(X_features.columns):
-            feature_importance = pd.Series(model.feature_importances_, index=X_features.columns)
-        else:
-            # If there's a shape mismatch, create a generic feature list
-            print(f"Shape mismatch: {len(model.feature_importances_)} importances vs {len(X_features.columns)} columns")
-            feature_columns = [f"Feature_{i}" for i in range(len(model.feature_importances_))]
-            feature_importance = pd.Series(model.feature_importances_, index=feature_columns)
-    else:
-        # For models that don't have feature_importances_ attribute
-        print("Model doesn't provide feature importances. Using coefficients if available.")
-        if hasattr(model, 'coef_'):
-            # For linear models
-            if len(model.coef_[0]) == len(X_features.columns):
-                feature_importance = pd.Series(np.abs(model.coef_[0]), index=X_features.columns)
-            else:
-                feature_columns = [f"Feature_{i}" for i in range(len(model.coef_[0]))]
-                feature_importance = pd.Series(np.abs(model.coef_[0]), index=feature_columns)
-        else:
-            print("Cannot extract feature importance from this model type.")
-            return
-    
-    # Plot feature importance
-    plt.figure(figsize=(10, 8))
-    feature_importance.nlargest(10).plot(kind='barh')
-    plt.title('Top 10 Feature Importance')
-    plt.savefig('results/feature_importance.png')
-    plt.close()
-    
-    # Additional visualizations
+    # Visualizations based on raw data without requiring the processed features
     
     # Contract Type vs Churn
     plt.figure(figsize=(10, 6))
-    contract_churn = df.groupby(['Contract', 'Churn']).size().unstack()
-    contract_churn.plot(kind='bar', stacked=True)
-    plt.title('Contract Type vs Churn')
-    plt.xlabel('Contract Type')
-    plt.ylabel('Count')
-    plt.savefig('results/contract_vs_churn.png')
-    plt.close()
+    if 'Contract' in df.columns:
+        contract_churn = df.groupby(['Contract', 'Churn']).size().unstack()
+        contract_churn.plot(kind='bar', stacked=True)
+        plt.title('Contract Type vs Churn')
+        plt.xlabel('Contract Type')
+        plt.ylabel('Count')
+        plt.savefig('results/contract_vs_churn.png')
+        plt.close()
+        print("Contract vs Churn visualization created")
     
     # Monthly Charges vs Churn
     plt.figure(figsize=(10, 6))
-    sns.boxplot(x='Churn', y='MonthlyCharges', data=df)
-    plt.title('Monthly Charges vs Churn')
-    plt.savefig('results/monthly_charges_vs_churn.png')
-    plt.close()
+    if 'MonthlyCharges' in df.columns:
+        sns.boxplot(x='Churn', y='MonthlyCharges', data=df)
+        plt.title('Monthly Charges vs Churn')
+        plt.savefig('results/monthly_charges_vs_churn.png')
+        plt.close()
+        print("Monthly Charges vs Churn visualization created")
     
     # Tenure vs Churn
     plt.figure(figsize=(10, 6))
-    sns.boxplot(x='Churn', y='tenure', data=df)
-    plt.title('Tenure vs Churn')
-    plt.savefig('results/tenure_vs_churn.png')
+    if 'tenure' in df.columns:
+        sns.boxplot(x='Churn', y='tenure', data=df)
+        plt.title('Tenure vs Churn')
+        plt.savefig('results/tenure_vs_churn.png')
+        plt.close()
+        print("Tenure vs Churn visualization created")
+    
+    # Internet Service vs Churn
+    plt.figure(figsize=(10, 6))
+    if 'InternetService' in df.columns:
+        internet_churn = df.groupby(['InternetService', 'Churn']).size().unstack()
+        internet_churn.plot(kind='bar', stacked=True)
+        plt.title('Internet Service vs Churn')
+        plt.xlabel('Internet Service')
+        plt.ylabel('Count')
+        plt.savefig('results/internet_service_vs_churn.png')
+        plt.close()
+        print("Internet Service vs Churn visualization created")
+    
+    # Payment Method vs Churn
+    plt.figure(figsize=(10, 6))
+    if 'PaymentMethod' in df.columns:
+        payment_churn = df.groupby(['PaymentMethod', 'Churn']).size().unstack()
+        payment_churn.plot(kind='bar', stacked=True)
+        plt.title('Payment Method vs Churn')
+        plt.xlabel('Payment Method')
+        plt.ylabel('Count')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig('results/payment_method_vs_churn.png')
+        plt.close()
+        print("Payment Method vs Churn visualization created")
+    
+    # Correlation Heatmap
+    plt.figure(figsize=(12, 10))
+    # Select only numeric columns
+    numeric_df = df.select_dtypes(include=[np.number])
+    # Create a correlation matrix
+    corr = numeric_df.corr()
+    # Plot the heatmap
+    sns.heatmap(corr, annot=True, cmap='coolwarm', fmt='.2f', linewidths=0.5)
+    plt.title('Correlation Heatmap of Numeric Features')
+    plt.tight_layout()
+    plt.savefig('results/correlation_heatmap.png')
     plt.close()
+    print("Correlation heatmap created")
+    
+    print("All visualizations completed successfully")
 
 if __name__ == "__main__":
     visualize_data()
