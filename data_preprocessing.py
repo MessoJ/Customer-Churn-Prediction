@@ -9,7 +9,7 @@ def preprocess_data():
     os.makedirs('data', exist_ok=True)
     os.makedirs('models', exist_ok=True)
     
-    # Load data
+    # Now let's load the data
     df = pd.read_csv('data/telco_churn.csv')
     
     # Handle TotalCharges
@@ -64,3 +64,4 @@ def preprocess_data():
 
 if __name__ == "__main__":
     preprocess_data()
+#By Messoj
