@@ -4,7 +4,7 @@ A comprehensive machine learning pipeline for predicting customer churn in the t
 
 ## Overview
 
-This repository contains an end-to-end solution for predicting customer churn, helping businesses identify customers at risk of leaving their service. The pipeline implements best practices in data preprocessing, feature engineering, model training, and evaluation.
+This repo contains an end-to-end solution for predicting customer churn, helping businesses identify customers at risk of leaving their service. The pipeline implements best practices in data preprocessing, feature engineering, model training, and evaluation.
 
 ## Features
 
@@ -36,7 +36,7 @@ This repository contains an end-to-end solution for predicting customer churn, h
 
 3. **Model Training** (`model_training.py`)
    - Implements machine learning model with cross-validation
-   - Current performance metrics:
+   - Current performance metrics:(still tuning)
      - Accuracy: 76%
      - Precision: 53%
      - Recall: 73%
@@ -57,7 +57,7 @@ This repository contains an end-to-end solution for predicting customer churn, h
 
 ```bash
 # Clone the repository
-git clone https://github.com/username/Customer-Churn-Prediction.git
+git clone https://github.com/MessoJ/Customer-Churn-Prediction.git
 cd Customer-Churn-Prediction
 
 # Install dependencies
@@ -107,13 +107,12 @@ Customer-Churn-Prediction/
 └── README.md
 ```
 
-## Future Improvements
+## What I'm working on to improve, You can also contribute
 
-- Consider implementing hyperparameter tuning
-- Explore ensemble models (Random Forest, XGBoost)
-- Add more interaction features
-- Develop customer segmentation before classification
-- Deploy as an API service
+- I'm mplementing hyperparameter tuning
+- Exploring ensemble models (Random Forest, XGBoost)
+- Adding more interaction features
+- Developing customer segmentation before classification
 
 ## License
 
@@ -121,4 +120,4 @@ MIT
 
 ## Acknowledgments
 
-This project was developed using telecommunication customer data to help businesses improve customer retention strategies.
+This project (is) and was  developed using telecommunication customer data to help businesses improve customer retention strategies.
