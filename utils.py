@@ -94,14 +94,4 @@ class ChurnConfig:
     MODEL_PATH = f'{MODELS_DIR}/churn_model.joblib'
     FEATURE_NAMES_PATH = f'{MODELS_DIR}/feature_names.joblib'
 
-# Example usage in a module:
-# 
-# from utils import setup_logging, time_it, ChurnConfig
-# 
-# logger = setup_logging()
-# 
-# @time_it
-# def process_data():
-#     logger.info("Processing data...")
-#     # Your existing code here
-#     logger.info("Data processing complete")
+#By MessoJ
