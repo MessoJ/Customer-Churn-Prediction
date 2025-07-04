@@ -166,3 +166,4 @@ if __name__ == "__main__":
     # Get prediction
     prediction = predict_churn(new_customer_processed)
     print("Churn Prediction:", prediction)
+#By MessoJ
