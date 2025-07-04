@@ -27,7 +27,7 @@ def evaluate_model():
         df['remainder__Churn'] = df['remainder__Churn'].map({'Yes': 1, 'No': 0})
     
     # Prepare features and target with correct column name
-    # X = df.drop('remainder__Churn', axis=1)
+    X = df.drop('remainder__Churn', axis=1)
     X = df[feature_names]
     y = df['remainder__Churn']
     
@@ -95,3 +95,4 @@ def evaluate_model():
 
 if __name__ == "__main__":
     evaluate_model()
+#By Messoj
