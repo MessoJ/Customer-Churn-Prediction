@@ -1,5 +1,3 @@
-# Add this to model_training.py or create a new file named model_validation.py
-
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import cross_val_score, StratifiedKFold
@@ -15,26 +13,26 @@ def cross_validate_model():
     """
     print("Performing cross-validation...")
     
-    # Load data
+    # Loading data
     df = pd.read_csv('data/engineered_data.csv')
     
     # Drop the customerID column if present
     if 'remainder__customerID' in df.columns:
         df = df.drop('remainder__customerID', axis=1)
     
-    # Make sure target is properly formatted
+    # Making sure target is properly formatted
     if df['remainder__Churn'].dtype == 'object':
         df['remainder__Churn'] = df['remainder__Churn'].map({'Yes': 1, 'No': 0})
     
-    # Handle remaining categorical columns
+    # Handling remaining categorical columns
     for col in df.select_dtypes(include=['object']).columns:
         df[col] = pd.factorize(df[col])[0]
     
-    # Separate features and target
+    # Separating features and target
     X = df.drop('remainder__Churn', axis=1)
     y = df['remainder__Churn']
     
-    # Define the feature selection if needed (using the same as in training)
+    # Defining the feature selection if needed (using the same as in training)
     important_features = [
         'remainder__tenure',
         'remainder__MonthlyCharges',
@@ -42,20 +40,20 @@ def cross_validate_model():
         'AvgMonthlyCharge'
     ]
     
-    # Use only important features if defined
+    # Using only important features if defined
     if len(important_features) > 0:
         X = X[important_features]
     
-    # Create results directory if it doesn't exist
+    # Creating results directory if it doesn't exist
     os.makedirs('results', exist_ok=True)
     
-    # Load the model
+    # Loading the model
     model = joblib.load('models/churn_model.joblib')
     
-    # Define cross-validation strategy (5-fold stratified CV)
+    # Defining cross-validation strategy (5-fold stratified CV)
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
     
-    # Calculate cross-validated scores
+    # Calculating cross-validated scores
     accuracy = cross_val_score(model, X, y, cv=cv, scoring='accuracy')
     precision = cross_val_score(model, X, y, cv=cv, scoring='precision')
     recall = cross_val_score(model, X, y, cv=cv, scoring='recall')
@@ -104,3 +102,4 @@ def cross_validate_model():
     
 if __name__ == "__main__":
     cross_validate_model()
+#By Messoj
