@@ -20,7 +20,7 @@ def create_advanced_features(df):
         'remainder__StreamingMovies'
     ]
     
-    # Convert any object columns to numeric
+    # To Convert any object columns to numeric
     for col in service_cols:
         if df[col].dtype == 'object':
             df[col] = df[col].replace({'Yes': 1, 'No': 0, 'No internet service': 0})
@@ -60,7 +60,7 @@ def create_advanced_features(df):
     return df
 
 def engineer_features():
-    # Ensure directory exists
+    # To ensure directory exists
     os.makedirs('data', exist_ok=True)
     
     # Read processed data
@@ -72,12 +72,12 @@ def engineer_features():
         errors='coerce'
     )
     
-    # Create new features with proper column names
+    # Creating new features with proper column names
     df['AvgMonthlyCharge'] = df['remainder__TotalCharges'] / (df['remainder__tenure'] + 1e-6)
     df['HighValueFlag'] = (df['remainder__MonthlyCharges'] > 70).astype(int)
     df['TenureToChargeRatio'] = df['remainder__tenure'] / (df['remainder__MonthlyCharges'] + 1e-6)
     
-    # Fix service diversity calculation
+    # Fixing service diversity calculation
     service_cols = [
         'remainder__OnlineSecurity',
         'remainder__TechSupport',
@@ -95,10 +95,10 @@ def engineer_features():
     df[remaining_cats] = df[remaining_cats].replace({'Yes': 1, 'No': 0, 'No internet service': 0}).infer_objects(copy=False)
     
     
-    # Add advanced features
+    # Adding advanced features
     df = create_advanced_features(df)
     
-    # Save engineered data
+    # Savig engineered data
     df.to_csv('data/engineered_data.csv', index=False)
     print("Feature engineering completed.")
     print("Engineered columns:", df.columns.tolist())
