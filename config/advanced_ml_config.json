@@ -1,0 +1,246 @@
+{
+  "system": {
+    "name": "Advanced ML Customer Churn Prediction",
+    "version": "1.0.0",
+    "environment": "production"
+  },
+  "infrastructure": {
+    "redis": {
+      "host": "localhost",
+      "port": 6379,
+      "db": 0,
+      "password": null,
+      "ssl": false,
+      "connection_pool_size": 10,
+      "socket_timeout": 5,
+      "socket_connect_timeout": 5
+    },
+    "kafka": {
+      "bootstrap_servers": "localhost:9092",
+      "security_protocol": "PLAINTEXT",
+      "sasl_mechanism": null,
+      "sasl_plain_username": null,
+      "sasl_plain_password": null,
+      "ssl_cafile": null,
+      "ssl_certfile": null,
+      "ssl_keyfile": null,
+      "ssl_password": null
+    },
+    "prometheus": {
+      "port": 8000,
+      "host": "0.0.0.0",
+      "metrics_path": "/metrics"
+    }
+  },
+  "models": {
+    "path": "models/",
+    "cache_ttl": 3600,
+    "version_control": true,
+    "a_b_testing": true,
+    "model_rotation": {
+      "enabled": true,
+      "interval_hours": 24,
+      "backup_models": 3
+    }
+  },
+  "components": {
+    "streaming": {
+      "enabled": true,
+      "kafka_topics": {
+        "user_events": "user_events",
+        "streaming_features": "streaming_features",
+        "anomalies": "anomalies"
+      },
+      "session_timeout": 1800,
+      "feature_cache_ttl": 300,
+      "batch_size": 100,
+      "max_retries": 3,
+      "processing_timeout": 30
+    },
+    "cold_start": {
+      "enabled": true,
+      "gnn": {
+        "input_dim": 21,
+        "hidden_dim": 128,
+        "num_layers": 3,
+        "dropout": 0.2,
+        "learning_rate": 0.001,
+        "batch_size": 32,
+        "epochs": 100
+      },
+      "demographic_clustering": {
+        "n_clusters": 10,
+        "min_samples_per_cluster": 10,
+        "similarity_threshold": 0.7
+      },
+      "referral_network": {
+        "max_network_size": 10000,
+        "relationship_strength_threshold": 0.3,
+        "cache_ttl": 3600
+      }
+    },
+    "counterfactual": {
+      "enabled": true,
+      "alibi": {
+        "kappa": 0.0,
+        "beta": 0.1,
+        "gamma": 100,
+        "theta": 100,
+        "max_iterations": 1000,
+        "c_steps": 10
+      },
+      "interventions": {
+        "discount": {
+          "min_value": 0.05,
+          "max_value": 0.25,
+          "step_size": 0.05
+        },
+        "feature_upgrade": {
+          "available_features": ["tech_support", "online_security", "device_protection"]
+        },
+        "retention_offer": {
+          "combinations": ["discount+feature", "discount+service", "feature+service"]
+        }
+      },
+      "cost_benefit": {
+        "min_ratio": 2.0,
+        "customer_lifetime_value": 1560.0,
+        "intervention_costs": {
+          "discount_10_percent": 6.5,
+          "tech_support_upgrade": 15.0,
+          "retention_package": 20.0
+        }
+      }
+    },
+    "adversarial": {
+      "enabled": true,
+      "gan": {
+        "noise_dim": 50,
+        "hidden_dim": 128,
+        "learning_rate_generator": 0.0002,
+        "learning_rate_discriminator": 0.0002,
+        "batch_size": 32,
+        "epochs": 100
+      },
+      "anomaly_detection": {
+        "methods": ["isolation_forest", "statistical", "distance_based"],
+        "contamination": 0.1,
+        "threshold_multiplier": 3.0,
+        "ensemble_weights": {
+          "isolation_forest": 0.4,
+          "statistical": 0.3,
+          "distance_based": 0.3
+        }
+      },
+      "attack_classification": {
+        "perturbation_threshold": 2.0,
+        "injection_threshold": 5.0,
+        "evasion_threshold": 0.8
+      },
+      "defense_actions": {
+        "block_threshold": 0.8,
+        "challenge_threshold": 0.6,
+        "monitor_threshold": 0.4
+      }
+    }
+  },
+  "monitoring": {
+    "metrics": {
+      "enabled": true,
+      "collection_interval": 15,
+      "retention_days": 30
+    },
+    "logging": {
+      "level": "INFO",
+      "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+      "file": "logs/advanced_ml.log",
+      "max_size_mb": 100,
+      "backup_count": 5
+    },
+    "health_checks": {
+      "enabled": true,
+      "interval_seconds": 30,
+      "timeout_seconds": 10,
+      "failure_threshold": 3
+    },
+    "alerting": {
+      "enabled": true,
+      "channels": ["email", "slack", "pagerduty"],
+      "thresholds": {
+        "prediction_latency_ms": 1000,
+        "error_rate_percent": 5.0,
+        "system_health_score": 0.8
+      }
+    }
+  },
+  "performance": {
+    "prediction": {
+      "timeout_seconds": 30,
+      "max_concurrent_requests": 1000,
+      "rate_limit_per_second": 100
+    },
+    "caching": {
+      "enabled": true,
+      "default_ttl": 3600,
+      "max_memory_mb": 1024,
+      "eviction_policy": "lru"
+    },
+    "batch_processing": {
+      "enabled": true,
+      "batch_size": 100,
+      "max_wait_time_seconds": 5
+    }
+  },
+  "security": {
+    "authentication": {
+      "enabled": true,
+      "method": "jwt",
+      "token_expiry_hours": 24
+    },
+    "authorization": {
+      "enabled": true,
+      "roles": ["admin", "analyst", "viewer"],
+      "permissions": {
+        "admin": ["read", "write", "delete", "train"],
+        "analyst": ["read", "write"],
+        "viewer": ["read"]
+      }
+    },
+    "encryption": {
+      "data_in_transit": true,
+      "data_at_rest": true,
+      "algorithm": "AES-256"
+    },
+    "rate_limiting": {
+      "enabled": true,
+      "requests_per_minute": 1000,
+      "burst_size": 100
+    }
+  },
+  "deployment": {
+    "environment": "production",
+    "region": "us-west-2",
+    "availability_zones": ["us-west-2a", "us-west-2b", "us-west-2c"],
+    "auto_scaling": {
+      "enabled": true,
+      "min_instances": 2,
+      "max_instances": 10,
+      "target_cpu_utilization": 70
+    },
+    "load_balancing": {
+      "enabled": true,
+      "algorithm": "round_robin",
+      "health_check_path": "/health",
+      "health_check_interval": 30
+    }
+  },
+  "development": {
+    "debug": false,
+    "test_mode": false,
+    "mock_external_services": false,
+    "profiling": {
+      "enabled": false,
+      "output_file": "logs/profiling.log"
+    }
+  }
+}
